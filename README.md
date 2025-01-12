@@ -1,4 +1,3 @@
-```markdown
 # Beginner Dashboard UI
 
 This project is a simple and beginner-friendly dashboard user interface (UI) built with HTML, CSS, and JavaScript. It serves as a basic training project for understanding front-end development concepts, including responsive design, DOM manipulation, and local storage usage.
@@ -51,7 +50,7 @@ Check out the live demo of the project:
 
 ## Screenshot
 
-![Dashboard Screenshot](img/Dashboard.jpeg)
+![Dashboard Screenshot](https://ziad-abaza.github.io/beginner-dashboard-ui/img/Dashboard.jpeg)
 
 ## Why This Project?
 
