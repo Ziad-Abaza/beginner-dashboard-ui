@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <title>dashboard</title>
+    <title>Dashboard</title>
 </head>
 <body>
-    <div class="menu">
+    <div class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </div>
+    <div class="menu" id="menu">
         <ul>
             <li class="profile">
                 <div class="img-profile">
@@ -67,7 +70,7 @@
         </ul>
     </div>
 
-    <div class="content">
+    <div class="content" id="content">
         <div class="title-info">
             <p>dashboard</p>
             <i class="fas fa-chart-bar"></i>
@@ -106,47 +109,110 @@
             </div>
         </div>
 
-        <div class="title-info">
+        <div class="title-info" id="productTitle">
             <p>product</p>
             <i class="fas fa-table"></i>
         </div>
-        <table class="tb-product">
-            <thead>
-                <tr>
-                    <th>product</th>
-                    <th>price</th>
-                    <th>count</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>TV</td>
-                    <td><span class="price">$15500</span></td>
-                    <td><span class="count">12</span></td>
-                </tr>
-                <tr>
-                    <td>samsung A21</td>
-                    <td><span class="price">$5000</span></td>
-                    <td><span class="count">7</span></td>
-                </tr>
-                <tr>
-                    <td>i phone 12 pro max</td>
-                    <td><span class="price">$22000</span></td>
-                    <td><span class="count">2</span></td>
-                </tr>
-                <tr>
-                    <td>dell g 15</td>
-                    <td><span class="price">$27000</span></td>
-                    <td><span class="count">17</span></td>
-                </tr>
-                <tr>
-                    <td>smart watch</td>
-                    <td><span class="price">$2000</span></td>
-                    <td><span class="count">47</span></td>
-                </tr>
-            </tbody>
-        </table>
 
+        <form id="productForm" class="hidden">
+            <input type="text" id="productName" placeholder="Product Name" required>
+            <input type="number" id="productPrice" placeholder="Price" required>
+            <input type="number" id="productCount" placeholder="Count" required>
+            <button type="submit">Add Product</button>
+        </form>
+
+        <div class="table-container">
+            <table class="tb-product">
+                <thead>
+                    <tr>
+                        <th>product</th>
+                        <th>price</th>
+                        <th>count</th>
+                        <th>actions</th>
+                    </tr>
+                </thead>
+                <tbody id="productTableBody">
+                </tbody>
+            </table>
+        </div>
     </div>
+
+    <script>
+        const productForm = document.getElementById('productForm');
+        const productTableBody = document.getElementById('productTableBody');
+        const productTitle = document.getElementById('productTitle');
+        let products = JSON.parse(localStorage.getItem('products')) || [];
+
+        const saveProducts = () => {
+            localStorage.setItem('products', JSON.stringify(products));
+        };
+
+        const renderProducts = () => {
+            productTableBody.innerHTML = '';
+            products.forEach((product, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.name}</td>
+                    <td><span class="price">$${product.price}</span></td>
+                    <td><span class="count">${product.count}</span></td>
+                    <td>
+                        <button onclick="editProduct(${index})">Edit</button>
+                        <button onclick="deleteProduct(${index})">Delete</button>
+                    </td>
+                `;
+                productTableBody.appendChild(row);
+            });
+        };
+
+        productForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('productName').value;
+            const price = document.getElementById('productPrice').value;
+            const count = document.getElementById('productCount').value;
+
+            if (name && price && count) {
+                products.push({ name, price, count });
+                saveProducts();
+                renderProducts();
+                productForm.reset();
+            }
+        });
+
+        const deleteProduct = (index) => {
+            if (confirm('Are you sure you want to delete this product?')) {
+                products.splice(index, 1);
+                saveProducts();
+                renderProducts();
+            }
+        };
+
+        const editProduct = (index) => {
+            const product = products[index];
+            const newName = prompt('Enter new name:', product.name);
+            const newPrice = prompt('Enter new price:', product.price);
+            const newCount = prompt('Enter new count:', product.count);
+
+            if (newName && newPrice && newCount) {
+                products[index] = { name: newName, price: newPrice, count: newCount };
+                saveProducts();
+                renderProducts();
+            }
+        };
+
+        renderProducts();
+
+        const menuToggle = document.getElementById('menuToggle');
+        const menu = document.getElementById('menu');
+        const content = document.getElementById('content');
+
+        menuToggle.addEventListener('click', () => {
+            menu.classList.toggle('active');
+            content.classList.toggle('active');
+        });
+
+        productTitle.addEventListener('click', () => {
+            productForm.classList.toggle('hidden');
+        });
+    </script>
 </body>
 </html>
